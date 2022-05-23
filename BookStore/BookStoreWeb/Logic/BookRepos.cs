@@ -1,6 +1,7 @@
 ﻿using BookStoreWeb.Data;
 using BookStoreWeb.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -73,6 +74,20 @@ namespace BookStoreWeb.Logic
                 return bookVM;
             }
             return null;
+        }
+        public async Task<int> AddBook(BookVM bookVM)
+        {
+            var book = new Book()
+            {
+                author = bookVM.author,
+                pages = bookVM.pages,
+                title = bookVM.title,
+                created = DateTime.Now,
+                modify = DateTime.Now,
+            };
+            await _db.Books.AddAsync(book);
+            await _db.SaveChangesAsync();
+            return book.id;
         }
     }
 }

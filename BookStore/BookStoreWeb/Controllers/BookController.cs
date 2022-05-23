@@ -1,4 +1,5 @@
 ﻿using BookStoreWeb.Logic;
+using BookStoreWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -30,6 +31,29 @@ namespace BookStoreWeb.Controllers
                 return View(await _bookRepos.GetBookByTitleOrAuther(titleOrAuther));
             }
             return View(null);
+        }
+        public IActionResult AddBook(bool isadded=false,int id=0)
+        {
+            ViewBag.isadded = isadded;
+            ViewBag.id = id;
+            return  View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddBook(BookVM bookVM) 
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("","Error: inputs is wrong.");
+                return View(bookVM);
+            }
+            var check = await _bookRepos.AddBook(bookVM);
+            if (check > 0)
+            {
+                return RedirectToAction("AddBook", new { isadded = true,id = check });
+            }
+            ModelState.AddModelError("", "Error: Record did not added.");
+            return View(bookVM);
         }
     }
 }
