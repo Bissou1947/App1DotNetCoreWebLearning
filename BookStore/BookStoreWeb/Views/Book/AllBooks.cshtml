@@ -1,0 +1,66 @@
+﻿@model IEnumerable<BookStoreWeb.Models.BookVM>
+
+@{
+    ViewData["Title"] = "AllBooks";
+}
+
+<h1>AllBooks</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.author)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.pages)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.created)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.modify)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count() > 0)
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.author)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.pages)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.created)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.modify)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                        @Html.ActionLink("Details", "GetBookById", new {  id=item.id  }) |
+                        @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td><h3 class="text-danger">No content founded.</h3></td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -29,9 +29,48 @@ namespace BookStoreWeb.Logic
                         id = book.id,
                         pages = book.pages,
                         title = book.title,
+                        created = book.created,
+                        modify = book.modify,
                     });
                 }
                 return booksVm;
+            }
+            return null;
+        }
+
+        public async Task<BookVM> GetBookById(int id)
+        {
+            var book = await _db.Books.FindAsync(id);
+            if (book != null)
+            {
+                var bookVM = new BookVM()
+                {
+                    author = book.author,
+                    id = book.id,
+                    pages = book.pages,
+                    title = book.title,
+                    created = book.created,
+                    modify = book.modify,
+                };
+                return bookVM;
+            }
+            return null;
+        }
+        public async Task<BookVM> GetBookByTitleOrAuther(string titleOrAuther)
+        {
+            var book = await _db.Books.Where(a=>a.title == titleOrAuther ||a.author == titleOrAuther).FirstOrDefaultAsync();
+            if (book != null)
+            {
+                var bookVM = new BookVM()
+                {
+                    author = book.author,
+                    id = book.id,
+                    pages = book.pages,
+                    title = book.title,
+                    created = book.created,
+                    modify = book.modify,
+                };
+                return bookVM;
             }
             return null;
         }
