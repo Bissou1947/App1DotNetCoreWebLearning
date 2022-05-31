@@ -1,5 +1,6 @@
 using BookStoreWeb.Data;
 using BookStoreWeb.Logic;
+using BookStoreWeb.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -28,11 +29,16 @@ namespace BookStoreWeb
             services.AddControllersWithViews();
 #if DEBUG
             services.AddRazorPages().AddRazorRuntimeCompilation();
+            services.AddRazorPages().AddViewOptions(option =>
+            {
+                option.HtmlHelperOptions.ClientValidationEnabled = false;
+            });
 #endif
             services.AddDbContext<BookStoreWebContext>(option =>
                 option.UseSqlServer("Server=DESKTOP-4HAH1DV\\SQLEXPRESS1;Database=BookStore;Integrated Security=True;")
             );
             services.AddScoped<BookRepos, BookRepos>();
+            services.AddScoped<LanguageRepos, LanguageRepos>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

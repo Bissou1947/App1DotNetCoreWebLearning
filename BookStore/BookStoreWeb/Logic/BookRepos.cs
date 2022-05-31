@@ -18,62 +18,52 @@ namespace BookStoreWeb.Logic
 
         public async Task<List<BookVM>> AllBooks()
         {
-            var books = await _db.Books.ToListAsync();
-            if (books?.Any() == true)
-            {
-                var booksVm = new List<BookVM>();
-                foreach (var book in books)
-                {
-                    booksVm.Add(new BookVM()
-                    {
-                        author = book.author,
-                        id = book.id,
-                        pages = book.pages,
-                        title = book.title,
-                        created = book.created,
-                        modify = book.modify,
-                    });
-                }
-                return booksVm;
-            }
-            return null;
+            return await _db.Books.Select(book => new BookVM {
+                author = book.author,
+                id = book.id,
+                pages = book.pages,
+                title = book.title,
+                created = book.created,
+                modify = book.modify,
+                language = book.Language.name,
+                coverImagePath = book.coverImagePath,
+            }).ToListAsync();
         }
 
         public async Task<BookVM> GetBookById(int id)
         {
-            var book = await _db.Books.FindAsync(id);
-            if (book != null)
-            {
-                var bookVM = new BookVM()
+            return await _db.Books.Where(a=> a.id == id).Select(book => new BookVM {
+                author = book.author,
+                id = book.id,
+                pages = book.pages,
+                title = book.title,
+                created = book.created,
+                modify = book.modify,
+                language = book.Language.name,
+                galleryImagesPaths = book.BookGallery.Select(b=> new BookGalleryVM
                 {
-                    author = book.author,
-                    id = book.id,
-                    pages = book.pages,
-                    title = book.title,
-                    created = book.created,
-                    modify = book.modify,
-                };
-                return bookVM;
-            }
-            return null;
+                    name = b.name,
+                    path = b.path,
+                }).ToList()
+            }).FirstOrDefaultAsync();
         }
         public async Task<BookVM> GetBookByTitleOrAuther(string titleOrAuther)
         {
-            var book = await _db.Books.Where(a=>a.title == titleOrAuther ||a.author == titleOrAuther).FirstOrDefaultAsync();
-            if (book != null)
+            return await _db.Books.Where(a=> a.title == titleOrAuther ||a.author == titleOrAuther).Select(book => new BookVM
             {
-                var bookVM = new BookVM()
+                author = book.author,
+                id = book.id,
+                pages = book.pages,
+                title = book.title,
+                created = book.created,
+                modify = book.modify,
+                language = book.Language.name,
+                galleryImagesPaths = book.BookGallery.Select(b => new BookGalleryVM
                 {
-                    author = book.author,
-                    id = book.id,
-                    pages = book.pages,
-                    title = book.title,
-                    created = book.created,
-                    modify = book.modify,
-                };
-                return bookVM;
-            }
-            return null;
+                    name = b.name,
+                    path = b.path,
+                }).ToList()
+            }).FirstOrDefaultAsync();
         }
         public async Task<int> AddBook(BookVM bookVM)
         {
@@ -84,7 +74,18 @@ namespace BookStoreWeb.Logic
                 title = bookVM.title,
                 created = DateTime.Now,
                 modify = DateTime.Now,
+                languageId = bookVM.languageId,
+                coverImagePath = bookVM.coverImagePath,
             };
+            book.BookGallery = new List<BookGallery>();
+            foreach (var file in bookVM.galleryImagesPaths)
+            {
+                book.BookGallery.Add(new BookGallery()
+                {
+                    name = file.name,
+                    path = file.path
+                });
+            }
             await _db.Books.AddAsync(book);
             await _db.SaveChangesAsync();
             return book.id;

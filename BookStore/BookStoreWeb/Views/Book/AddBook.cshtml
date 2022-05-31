@@ -1,7 +1,8 @@
-﻿@model BookStoreWeb.Models.BookVM
+﻿@model BookVM
 
 @{
     ViewData["Title"] = "AddBook";
+    var GeneralDropDawnVM = (BookStoreWeb.Models.GeneralDropDawnVM)ViewBag.language;
 }
 
 <h1>AddBook</h1>
@@ -17,10 +18,23 @@
         </button>
     </div>
 }
+@*<div class="d-flex justify-content-center">
+    <div class="spinner-grow" role="status" id="myLoader" style="display:none;">
+    <span class="sr-only">Loading...</span>
+    </div>
+    </div>*@
+
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="AddBook" method="post">
+        @* <form asp-action="AddBook" method="post" data-ajax="true" data-ajax-method="post"
+            data-ajax-confirm="Are you sure?"
+            data-ajax-success="successFunc" data-ajax-failure="failureFunc"
+            data-ajax-loading="#myLoader" >*@
+
+        <form asp-action="AddBook" method="post" enctype="multipart/form-data">
+
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <div class="form-group">
                 <label asp-for="title" class="control-label"></label>
                 <input asp-for="title" class="form-control" />
@@ -37,6 +51,29 @@
                 <span asp-validation-for="pages" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="languageId" class="control-label"></label>
+                <select asp-for="languageId" class="form-control" asp-items="(SelectList)GeneralDropDawnVM.language">
+                    <option value="">-- Select Language --</option>
+                </select>
+                <span asp-validation-for="languageId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="coverPhoto" class="control-label"></label>
+                <div class="custom-file">
+                    <input asp-for="coverPhoto" class="custom-file-input" />
+                    <label asp-for="coverPhoto" class="custom-file-label" for="coverPhoto">Chose photo please</label>
+                    <span asp-validation-for="coverPhoto" class="text-danger"></span>
+                </div>
+            </div>
+              <div class="form-group">
+                <label asp-for="galleryPhotos" class="control-label"></label>
+                <div class="custom-file">
+                    <input asp-for="galleryPhotos" class="custom-file-input" />
+                    <label asp-for="galleryPhotos" class="custom-file-label" for="galleryPhotos">Chose photos please</label>
+                    <span asp-validation-for="galleryPhotos" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
@@ -50,5 +87,24 @@
 @section Scripts {
     @{
     await Html.RenderPartialAsync("_ValidationScriptsPartial");
-}
+    }
+
+@*<script>
+    //.....for data-ajax form.....//
+    successFunc = function (xhr) {
+    alert(`Status: ${xhr.status}, Status Text: ${xhr.statusText}, success.`);
+    if(xhr == 1){
+    alert("WOW");
+    }
+    else{
+    alert("nOT WOW");
+    }
+    };
+
+    failureFunc = function (xhr) {
+    alert(`Status: ${xhr.status}, Status Text: ${xhr.statusText}, faild.`);
+    };
+    //..........................//
+    </script>*@
+
 }
